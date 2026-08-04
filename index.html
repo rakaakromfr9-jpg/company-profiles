@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fieldwork — Authorized Access Portal & Company Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=Archivo+Expanded:wght@700;800;900&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==================== WELCOME COVER VIEW ==================== -->
+  <div id="welcomeView" class="app-view view-active">
+    <section class="welcome-hero">
+      <div class="welcome-grid-bg"></div>
+      
+      <div class="welcome-card">
+        <div class="welcome-badge">
+          <span class="dot"></span> Authorized Access Portal
+        </div>
+        
+        <h1 class="welcome-title">
+          Welcome to <span class="accent">Fieldwork</span><br>
+          <span class="stroke">Studio Access</span>
+        </h1>
+        
+        <p class="welcome-subtitle">
+          Please authorize with your <strong>Discord account</strong> to verify identity and unlock the private studio dashboard &amp; client showcase.
+        </p>
+        
+        <div class="welcome-actions">
+          <button id="discordLoginBtn" class="btn-discord">
+            <svg viewBox="0 0 127.14 96.36">
+              <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a73.57,73.57,0,0,0,64.32,0c.87.69,1.76,1.37,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77.5,77.5,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.91-72.13ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.92,53.86,53,48.8,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.92,96.09,53,91,65.69,84.69,65.69Z"/>
+            </svg>
+            Authorize with Discord
+          </button>
+          
+          <button id="demoLoginBtn" class="btn-demo">
+            Instant Demo Access →
+          </button>
+
+          <button id="configDiscordBtn" class="btn-config-link">
+            ⚙ Configure Discord Client ID
+          </button>
+        </div>
+        
+        <div class="welcome-highlights">
+          <div class="highlight-card">
+            <h4>Security</h4>
+            <p>OAuth2 API authentication via official Discord endpoint.</p>
+          </div>
+          <div class="highlight-card">
+            <h4>Live Profile</h4>
+            <p>Displays verified Discord avatar, username, and ID badge.</p>
+          </div>
+          <div class="highlight-card">
+            <h4>Dashboard</h4>
+            <p>Unlocks complete studio portfolio &amp; interactive case studies.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== PROTECTED DASHBOARD VIEW ==================== -->
+  <div id="dashboardView" class="app-view">
+    
+    <!-- Top Discord User Status Bar -->
+    <div id="discordUserBar" class="discord-user-bar">
+      <div class="user-profile-info">
+        <div class="user-avatar-wrap">
+          <img id="userAvatarImg" class="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Discord Avatar">
+          <span class="user-status-dot"></span>
+        </div>
+        <div class="user-details">
+          <div class="user-name">
+            <span id="userGlobalName">Alex Rivera</span>
+            <span class="auth-badge">Verified via Discord</span>
+          </div>
+          <div id="userUsername" class="user-tag">@alex_fieldwork</div>
+        </div>
+      </div>
+      
+      <button id="logoutBtn" class="btn-logout">
+        Sign Out
+      </button>
+    </div>
+
+    <!-- MAIN COMPANY PROFILE CONTENT -->
+    <header class="nav" id="siteNav">
+      <a href="#top" class="logo"><span class="dot"></span>FIELDWORK</a>
+      <nav class="links">
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#clients">Clients</a>
+      </nav>
+      <a href="#contact" class="nav-cta">Contact</a>
+    </header>
+
+    <main id="top">
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-grid"></div>
+        <div class="hero-eyebrow"><span class="dot"></span>PORT ELM &amp; HARLOW — DIGITAL BRAND STUDIO</div>
+        <h1 class="hero-title">
+          <span class="hero-reveal"><span>Built to <span class="stroke">provoke.</span></span></span><br>
+          <span class="hero-reveal"><span>Designed to <span class="accent">convert.</span></span></span>
+        </h1>
+        <div class="hero-sub-row">
+          <p class="hero-copy">Fieldwork is a research-driven design studio that helps brands <strong>engage</strong> users, <strong>connect</strong> with customers, and quietly <strong>outmaneuver</strong> their competition.</p>
+          <div class="hero-tags tag-list">
+            <span>Research</span><span>Strategy</span><span>Brand</span><span>Web</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- CLIENT MARQUEE -->
+      <section class="marquee-section" aria-label="Client roster">
+        <div class="marquee-track" id="marqueeTrack"></div>
+      </section>
+
+      <!-- FEATURED WORK -->
+      <section class="section" id="work">
+        <div class="section-head">
+          <div><span class="eyebrow">Featured work</span><h2 class="section-title">Selected case studies</h2></div>
+          <a href="#" class="section-link">View all work (31) →</a>
+        </div>
+        <div class="slider" id="slider">
+          <div class="slide active" data-i="0">
+            <div class="slide-media"><div class="thumb"></div></div>
+            <div class="slide-meta">
+              <div class="slide-name">Amber Field</div>
+              <div class="tag-list"><span>Brand Identity</span><span>Creative Direction</span><span>Strategy</span><span>Concept Design</span></div>
+            </div>
+          </div>
+          <div class="slide" data-i="1">
+            <div class="slide-media"><div class="thumb"></div></div>
+            <div class="slide-meta">
+              <div class="slide-name">Northbound Co.</div>
+              <div class="tag-list"><span>Digital Design</span><span>Web Development</span></div>
+            </div>
+          </div>
+          <div class="slide" data-i="2">
+            <div class="slide-media"><div class="thumb"></div></div>
+            <div class="slide-meta">
+              <div class="slide-name">Halden Gallery</div>
+              <div class="tag-list"><span>Creative Direction</span><span>Digital Design</span><span>Web Development</span></div>
+            </div>
+          </div>
+          <div class="slide" data-i="3">
+            <div class="slide-media"><div class="thumb"></div></div>
+            <div class="slide-meta">
+              <div class="slide-name">Plainfield Finance</div>
+              <div class="tag-list"><span>Brand Identity</span><span>Digital Design</span><span>Web Development</span></div>
+            </div>
+          </div>
+          <div class="slider-nav" id="sliderNav"></div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="section" id="about">
+        <div class="about-grid">
+          <div><span class="eyebrow">Who we are</span><h2 class="section-title">An international studio reimagining how brands connect</h2></div>
+          <div>
+            <p>We're a small team of curious humans who build work we're proud of, for brands we believe in. Every project pairs deep research with sharp art direction — combining strategy, branding, web design and development into digital experiences that actually move the needle.</p>
+            <a href="#" class="reel-btn"><span class="playdot"></span> Play studio reel</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- CAPABILITIES -->
+      <section class="section" id="capabilities">
+        <div class="section-head"><div><span class="eyebrow">What we do</span><h2 class="section-title">Capabilities</h2></div></div>
+        <div class="cap-list">
+          <details class="cap-item" open>
+            <summary><span class="cap-num">01</span><span class="cap-title">Research &amp; Strategy</span><span class="cap-toggle">+</span></summary>
+            <div class="cap-body">
+              We ground every engagement in primary and secondary research — usability testing, competitive audits, and stakeholder interviews — so creative decisions are validated, not guessed.
+              <div class="tag-list"><span>User Research</span><span>Competitive Audit</span><span>SEO Strategy</span></div>
+            </div>
+          </details>
+          <details class="cap-item">
+            <summary><span class="cap-num">02</span><span class="cap-title">Brand &amp; Design</span><span class="cap-toggle">+</span></summary>
+            <div class="cap-body">
+              Art direction, identity systems, and visual content that communicate what words can't — built to scale across every touchpoint a brand shows up in.
+              <div class="tag-list"><span>Identity Systems</span><span>Art Direction</span><span>Design Systems</span></div>
+            </div>
+          </details>
+          <details class="cap-item">
+            <summary><span class="cap-num">03</span><span class="cap-title">Engineering</span><span class="cap-toggle">+</span></summary>
+            <div class="cap-body">
+              Full-stack discipline applied to low-code systems — Webflow, headless commerce, and custom builds — so founders can ship fast and test concepts without waiting on a dev queue.
+              <div class="tag-list"><span>Webflow</span><span>eCommerce</span><span>Custom Development</span></div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- BRANDS WORKED WITH — accordion -->
+      <section class="section" id="clients">
+        <div class="section-head"><div><span class="eyebrow">Track record</span><h2 class="section-title">Brands we've worked with</h2></div></div>
+        <div class="worked-list" id="workedList"></div>
+      </section>
+
+      <!-- AWARDS -->
+      <section class="section">
+        <div class="section-head"><div><span class="eyebrow">Recognition</span><h2 class="section-title">We don't chase awards, but it's nice</h2></div></div>
+        <div class="awards-grid">
+          <div class="award-card"><div class="award-org">Design Press</div><ul><li>Site of the Day</li><li>Honourable Mention</li><li>Studio to Watch</li></ul></div>
+          <div class="award-card"><div class="award-org">Web Annual</div><ul><li>Site of the Day</li></ul></div>
+          <div class="award-card"><div class="award-org">Interface Awards</div><ul><li>Website of the Day</li><li>UX Design</li><li>UI Design</li></ul></div>
+          <div class="award-card"><div class="award-org">Craft Guild</div><ul><li>Shortlisted</li></ul></div>
+        </div>
+      </section>
+
+      <!-- STAT TICKER -->
+      <div class="stat-ticker">
+        <div class="ticker-row right"><div class="ticker-inner" id="tickerA"></div></div>
+        <div class="ticker-row left"><div class="ticker-inner" id="tickerB"></div></div>
+      </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+      <div class="footer-top">
+        <div class="footer-cta">
+          <span class="eyebrow">Start a project</span>
+          <h3>Let's work — together.</h3>
+          <a href="#" class="footer-link">Get in touch →</a>
+        </div>
+        <div class="footer-info">
+          <div class="footer-col">
+            <h4>Business Enquiries</h4>
+            <a href="mailto:hello@fieldwork.studio">hello@fieldwork.studio</a>
+            <a href="#">+1 (000) 000-0000</a>
+          </div>
+          <div class="footer-col">
+            <h4>Studio</h4>
+            <p>Studio address on request</p>
+            <p>Port Elm · Harlow</p>
+          </div>
+          <div class="footer-col">
+            <h4>Business Hours</h4>
+            <p>Monday – Friday</p>
+            <p>08:00 – 18:00</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Fieldwork © 2026. All rights reserved.</p>
+        <div class="socials"><a href="#">Dribbble</a><a href="#">Instagram</a><a href="#">LinkedIn</a></div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- DISCORD CLIENT CONFIG MODAL -->
+  <div id="configModal" class="modal-overlay">
+    <div class="modal-card">
+      <h3>Discord Developer Settings</h3>
+      <p>Enter your Discord Application Client ID from the Discord Developer Portal to enable live OAuth2 logins.</p>
+      
+      <div class="input-group">
+        <label for="clientIdInput">Application Client ID</label>
+        <input type="text" id="clientIdInput" placeholder="e.g. 123456789012345678">
+      </div>
+      
+      <div class="input-group">
+        <label for="redirectUriInput">Redirect URI</label>
+        <input type="text" id="redirectUriInput" placeholder="http://localhost:8080/index.html">
+      </div>
+      
+      <div class="modal-buttons">
+        <button id="closeModalBtn" class="btn-secondary">Cancel</button>
+        <button id="saveConfigBtn" class="btn-primary">Save &amp; Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
