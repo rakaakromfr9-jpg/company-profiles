@@ -1,22 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Elements
+  // View Elements
   const welcomeView = document.getElementById('welcomeView');
   const dashboardView = document.getElementById('dashboardView');
+
+  // Auth Buttons & Modals
   const discordLoginBtn = document.getElementById('discordLoginBtn');
-  const demoLoginBtn = document.getElementById('demoLoginBtn');
+  const nicknameInputInline = document.getElementById('nicknameInputInline');
+  const nicknameSubmitBtn = document.getElementById('nicknameSubmitBtn');
   const logoutBtn = document.getElementById('logoutBtn');
   const configDiscordBtn = document.getElementById('configDiscordBtn');
+  
+  // Modals
   const configModal = document.getElementById('configModal');
   const closeModalBtn = document.getElementById('closeModalBtn');
   const saveConfigBtn = document.getElementById('saveConfigBtn');
   const clientIdInput = document.getElementById('clientIdInput');
   const redirectUriInput = document.getElementById('redirectUriInput');
 
+  // Dashboard Profile Elements
   const userAvatarImg = document.getElementById('userAvatarImg');
   const userGlobalName = document.getElementById('userGlobalName');
   const userUsername = document.getElementById('userUsername');
+  const authBadge = document.querySelector('.auth-badge');
 
-  // Default Discord Config
+  // Config State
   const defaultRedirectUri = window.location.origin + window.location.pathname;
   let discordClientId = localStorage.getItem('discord_client_id') || '';
   let discordRedirectUri = localStorage.getItem('discord_redirect_uri') || defaultRedirectUri;
@@ -37,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Render Logged In Discord User Header
+  // Render Logged-In User Profile in Header
   function renderUserHeader(user) {
     if (!user) return;
     if (userAvatarImg) {
@@ -50,7 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     if (userGlobalName) userGlobalName.textContent = user.global_name || user.username;
-    if (userUsername) userUsername.textContent = `@${user.username}`;
+    if (userUsername) userUsername.textContent = user.username.startsWith('@') ? user.username : `@${user.username}`;
+    
+    if (authBadge) {
+      if (user.auth_type === 'nickname') {
+        authBadge.textContent = 'Signed in via Nickname';
+      } else {
+        authBadge.textContent = 'Verified via Discord OAuth2';
+      }
+    }
   }
 
   // Parse Discord OAuth URL Hash
@@ -63,32 +78,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const tokenType = params.get('token_type');
 
     if (accessToken) {
-      // Clear URL hash
       history.replaceState(null, "", window.location.pathname + window.location.search);
 
-      // Fetch user profile from Discord API
       fetch('https://discord.com/api/v10/users/@me', {
         headers: { Authorization: `${tokenType || 'Bearer'} ${accessToken}` }
       })
         .then(res => res.json())
         .then(userData => {
           if (userData && userData.id) {
+            userData.auth_type = 'oauth2';
             localStorage.setItem('discord_user', JSON.stringify(userData));
             renderUserHeader(userData);
             setView('dashboard');
           }
         })
         .catch(err => {
-          console.error('Failed to fetch Discord user:', err);
-          alert('Failed to authorize with Discord API. Using demo session.');
-          triggerDemoLogin();
+          console.error('Discord API authorization failed:', err);
+          alert('Could not verify OAuth2 token with Discord. You can log in using your Discord Nickname.');
         });
       return true;
     }
     return false;
   }
 
-  // Check saved session
+  // Check saved session on page load
   function checkAuthSession() {
     const isHandlingOAuth = handleOAuthCallback();
     if (isHandlingOAuth) return;
@@ -108,32 +121,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Demo Login Handler
-  function triggerDemoLogin() {
-    const demoUser = {
-      id: '884920193840192841',
-      username: 'alex_fieldwork',
-      global_name: 'Alex Rivera',
-      avatar: 'https://cdn.discordapp.com/embed/avatars/1.png',
-      email: 'alex@fieldwork.studio'
+  // --- NICKNAME LOGIN HANDLER ---
+  function handleNicknameSubmit() {
+    const rawName = nicknameInputInline ? nicknameInputInline.value.trim() : '';
+    if (!rawName) {
+      alert('Please enter your Discord nickname.');
+      if (nicknameInputInline) nicknameInputInline.focus();
+      return;
+    }
+
+    const randomAvatarIndex = Math.floor(Math.random() * 5);
+    const userObj = {
+      id: 'nick_' + Date.now().toString(36),
+      username: rawName.toLowerCase().replace(/\s+/g, '_'),
+      global_name: rawName,
+      avatar: `https://cdn.discordapp.com/embed/avatars/${randomAvatarIndex}.png`,
+      auth_type: 'nickname'
     };
-    localStorage.setItem('discord_user', JSON.stringify(demoUser));
-    renderUserHeader(demoUser);
+
+    localStorage.setItem('discord_user', JSON.stringify(userObj));
+    renderUserHeader(userObj);
     setView('dashboard');
   }
 
-  // Event Listeners
-  if (demoLoginBtn) {
-    demoLoginBtn.addEventListener('click', triggerDemoLogin);
-  }
+  // --- EVENT LISTENERS ---
 
+  // Option 1: Direct Discord OAuth Login
   if (discordLoginBtn) {
     discordLoginBtn.addEventListener('click', () => {
       const clientId = localStorage.getItem('discord_client_id') || discordClientId;
       const redirectUri = localStorage.getItem('discord_redirect_uri') || defaultRedirectUri;
 
       if (!clientId) {
-        // Open modal if Client ID is missing
         if (configModal) configModal.classList.add('modal-open');
         return;
       }
@@ -143,6 +162,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Option 2: Continue with nickname
+  if (nicknameSubmitBtn) {
+    nicknameSubmitBtn.addEventListener('click', handleNicknameSubmit);
+  }
+
+  if (nicknameInputInline) {
+    nicknameInputInline.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleNicknameSubmit();
+      }
+    });
+  }
+
+  // Sign Out
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('discord_user');
@@ -150,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Config Modal Handlers
   if (configDiscordBtn) {
     configDiscordBtn.addEventListener('click', () => {
       if (configModal) configModal.classList.add('modal-open');
@@ -187,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
   }
 
-  // client marquee
+  // Client Marquee
   const marqueeTrack = document.getElementById('marqueeTrack');
   if (marqueeTrack) {
     const clients = [
@@ -198,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
     marqueeTrack.innerHTML = [...clients, ...clients].map(c => `<span>${c}</span>`).join('');
   }
 
-  // footer tickers
+  // Footer Tickers
   const tickerA = document.getElementById('tickerA');
   const tickerB = document.getElementById('tickerB');
   if (tickerA && tickerB) {
@@ -208,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tickerB.innerHTML = [...statsB, ...statsB].map(s => `<span>${s}</span>`).join('');
   }
 
-  // slider
+  // Featured Work Slider
   const slides = [...document.querySelectorAll('.slide')];
   const sliderNav = document.getElementById('sliderNav');
   if (slides.length > 0 && sliderNav) {
@@ -232,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(() => goTo((current + 1) % slides.length), 6000);
   }
 
-  // worked-with accordion
+  // Worked-with Accordion
   const list = document.getElementById('workedList');
   if (list) {
     const worked = [
@@ -256,6 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // Initialize Auth Check
+  // Initialize Session Check
   checkAuthSession();
 });
