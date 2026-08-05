@@ -13,6 +13,9 @@
 const DISCORD_CLIENT_ID = '1534210727001325618';
 const DISCORD_REDIRECT_URI = 'https://rakaakromfr9-jpg.github.io/company-profiles/';
 
+// Labels for the "Let's Join With Us" categories
+const ROLE_LABELS = { developer: 'Developer', artist: 'Artist', creator: 'Creator' };
+
 document.addEventListener('DOMContentLoaded', () => {
   // View Elements
   const welcomeView = document.getElementById('welcomeView');
@@ -23,18 +26,78 @@ document.addEventListener('DOMContentLoaded', () => {
   const nicknameInputInline = document.getElementById('nicknameInputInline');
   const nicknameSubmitBtn = document.getElementById('nicknameSubmitBtn');
   const logoutBtn = document.getElementById('logoutBtn');
+  const accountLogoutBtn = document.getElementById('accountLogoutBtn');
 
   // Dashboard Profile Elements
   const userAvatarImg = document.getElementById('userAvatarImg');
   const userGlobalName = document.getElementById('userGlobalName');
   const userUsername = document.getElementById('userUsername');
   const authBadge = document.querySelector('.auth-badge');
+  const userRoleBadge = document.getElementById('userRoleBadge');
+
+  // Role selection (before login)
+  const roleCards = document.querySelectorAll('.role-card');
+  const selectedRolePill = document.getElementById('selectedRolePill');
+  const selectedRoleLabel = document.getElementById('selectedRoleLabel');
+  let selectedRole = localStorage.getItem('yvolka_role') || null;
+
+  // Dashboard tabs
+  const dashNavLinks = document.querySelectorAll('.dash-nav-link');
+  const dashViews = document.querySelectorAll('.dash-view');
+
+  // ---------------------------------------------------------------------
+  // ROLE SELECTION ("Let's Join With Us")
+  // ---------------------------------------------------------------------
+  function updateRolePill() {
+    if (!selectedRoleLabel) return;
+    if (selectedRole) {
+      selectedRoleLabel.textContent = `Joining as ${ROLE_LABELS[selectedRole]}`;
+      selectedRolePill.classList.add('has-role');
+      selectedRolePill.style.setProperty('--role-color', `var(--role-${selectedRole})`);
+    } else {
+      selectedRoleLabel.textContent = 'Select a category above';
+      selectedRolePill.classList.remove('has-role');
+    }
+  }
+
+  roleCards.forEach(card => {
+    card.addEventListener('click', () => {
+      selectedRole = card.dataset.role;
+      localStorage.setItem('yvolka_role', selectedRole);
+      roleCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      updateRolePill();
+    });
+  });
+
+  if (selectedRole) {
+    const savedCard = document.querySelector(`.role-card[data-role="${selectedRole}"]`);
+    if (savedCard) savedCard.classList.add('selected');
+  }
+  updateRolePill();
+
+  // ---------------------------------------------------------------------
+  // DASHBOARD TABS (Home / Account / Campaign)
+  // ---------------------------------------------------------------------
+  function setDashView(viewName) {
+    dashViews.forEach(v => v.classList.toggle('active', v.id === 'dash' + viewName.charAt(0).toUpperCase() + viewName.slice(1)));
+    dashNavLinks.forEach(l => l.classList.toggle('active', l.dataset.view === viewName));
+    window.scrollTo(0, 0);
+  }
+
+  dashNavLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      setDashView(link.dataset.view);
+    });
+  });
 
   // View Router Function
   function setView(viewName) {
     if (viewName === 'dashboard') {
       welcomeView.classList.remove('view-active');
       dashboardView.classList.add('view-active');
+      setDashView('home');
       window.scrollTo(0, 0);
     } else {
       dashboardView.classList.remove('view-active');
@@ -43,27 +106,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Render Logged-In User Profile in Header
+  // Render Logged-In User Profile (top bar + Account tab)
   function renderUserHeader(user) {
     if (!user) return;
-    if (userAvatarImg) {
-      if (user.avatar) {
-        userAvatarImg.src = user.avatar.startsWith('http')
-          ? user.avatar
-          : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-      } else {
-        userAvatarImg.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
-      }
-    }
+    const avatarUrl = user.avatar
+      ? (user.avatar.startsWith('http') ? user.avatar : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`)
+      : 'https://cdn.discordapp.com/embed/avatars/0.png';
+
+    if (userAvatarImg) userAvatarImg.src = avatarUrl;
     if (userGlobalName) userGlobalName.textContent = user.global_name || user.username;
     if (userUsername) userUsername.textContent = user.username.startsWith('@') ? user.username : `@${user.username}`;
-    
+
     if (authBadge) {
-      if (user.auth_type === 'nickname') {
-        authBadge.textContent = 'Signed in via Nickname';
-      } else {
-        authBadge.textContent = 'Verified via Discord OAuth2';
-      }
+      authBadge.textContent = user.auth_type === 'nickname' ? 'Signed in via Nickname' : 'Verified via Discord OAuth2';
+    }
+
+    const roleLabel = ROLE_LABELS[user.role] || 'Creator';
+    if (userRoleBadge) userRoleBadge.textContent = roleLabel;
+
+    renderAccountView(user, avatarUrl, roleLabel);
+  }
+
+  // Render the dedicated Account tab
+  function renderAccountView(user, avatarUrl, roleLabel) {
+    const accAvatar = document.getElementById('accountAvatarImg');
+    const accName = document.getElementById('accountName');
+    const accUsername = document.getElementById('accountUsername');
+    const accAuthBadge = document.getElementById('accountAuthBadge');
+    const accRoleChip = document.getElementById('accountRoleChip');
+    const accRoleText = document.getElementById('accountRoleText');
+    const accJoined = document.getElementById('accountJoined');
+
+    if (accAvatar) accAvatar.src = avatarUrl;
+    if (accName) accName.textContent = user.global_name || user.username;
+    if (accUsername) accUsername.textContent = user.username.startsWith('@') ? user.username : `@${user.username}`;
+    if (accAuthBadge) accAuthBadge.textContent = user.auth_type === 'nickname' ? 'Signed in via Nickname' : 'Verified via Discord OAuth2';
+    if (accRoleChip) accRoleChip.textContent = roleLabel;
+    if (accRoleText) accRoleText.textContent = roleLabel;
+    if (accJoined) {
+      if (!user.joined_label) user.joined_label = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+      accJoined.textContent = user.joined_label;
     }
   }
 
@@ -86,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(userData => {
           if (userData && userData.id) {
             userData.auth_type = 'oauth2';
+            userData.role = selectedRole || 'creator';
             localStorage.setItem('discord_user', JSON.stringify(userData));
             renderUserHeader(userData);
             setView('dashboard');
@@ -135,7 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
       username: rawName.toLowerCase().replace(/\s+/g, '_'),
       global_name: rawName,
       avatar: `https://cdn.discordapp.com/embed/avatars/${randomAvatarIndex}.png`,
-      auth_type: 'nickname'
+      auth_type: 'nickname',
+      role: selectedRole || 'creator'
     };
 
     localStorage.setItem('discord_user', JSON.stringify(userObj));
@@ -171,13 +255,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Sign Out
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('discord_user');
-      setView('welcome');
-    });
+  // Sign Out (top bar + Account tab)
+  function handleLogout() {
+    localStorage.removeItem('discord_user');
+    setView('welcome');
   }
+  if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+  if (accountLogoutBtn) accountLogoutBtn.addEventListener('click', handleLogout);
 
   // --- DASHBOARD INTERACTIVE FEATURES ---
   const nav = document.getElementById('siteNav');
@@ -234,13 +318,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const list = document.getElementById('workedList');
   if (list) {
     const worked = [
-  { name: "Vess & Rowe", tags: "Research – Strategy", body: "A round of interviews and usability tests gave us a clear direction." },
-  { name: "Marlowe Labs", tags: "Design", body: "Built an online store that matched the product's packaging and feel." },
-  { name: "Coastline Freight", tags: "Research – Strategy – Design – Development", body: "Maintained and grew their logistics platform over several years." },
-  { name: "Iron Gate Studio", tags: "Strategy – Design – Development", body: "Restructured messaging hierarchy and improved findability." },
-  { name: "Fernhollow", tags: "Research – Strategy – Design – Development", body: "A wellness app with a calm, unhurried interface." },
-  { name: "Quill Insurance", tags: "Research – Strategy – Design – Development", body: "Simplified their multi-step quote flow for first-time visitors." }
-];
+      { name: "Vess & Rowe", tags: "Research – Strategy", body: "A round of interviews and usability tests gave us a clear direction." },
+      { name: "Marlowe Labs", tags: "Design", body: "Built an online store that matched the product's packaging and feel." },
+      { name: "Coastline Freight", tags: "Research – Strategy – Design – Development", body: "Maintained and grew their logistics platform over several years." },
+      { name: "Iron Gate Studio", tags: "Strategy – Design – Development", body: "Restructured messaging hierarchy and improved findability." },
+      { name: "Fernhollow", tags: "Research – Strategy – Design – Development", body: "A wellness app with a calm, unhurried interface." },
+      { name: "Quill Insurance", tags: "Research – Strategy – Design – Development", body: "Simplified their multi-step quote flow for first-time visitors." }
+    ];
     list.innerHTML = worked.map((w, i) => `
       <details class="worked-item">
         <summary>
