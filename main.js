@@ -234,13 +234,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const list = document.getElementById('workedList');
   if (list) {
     const worked = [
-      { name: "Vess & Rowe", tags: "Research – Strategy", body: "A round of interviews and budgeting-app usability tests with their savings customers gave us a clear direction, and the resulting proposition tested well before a single screen was designed." },
-      { name: "Marlowe Labs", tags: "Design", body: "Their shoe-care line needed an online store that felt as considered as the product itself, so we kept the interface quiet and let the packaging photography carry the page." },
-      { name: "Coastline Freight", tags: "Research – Strategy – Design – Development", body: "We've maintained and grown their logistics platform for several years now, adding features in step with how the business itself has changed." },
-      { name: "Iron Gate Studio", tags: "Strategy – Design – Development", body: "Their offer was strong but hard to find on the old site — we restructured the messaging hierarchy first, then rebuilt the front end around it, and inbound leads picked up within the quarter." },
-      { name: "Fernhollow", tags: "Research – Strategy – Design – Development", body: "A wellness app built around breathing exercises, where the whole interface had to feel unhurried without ever feeling slow to use." },
-      { name: "Quill Insurance", tags: "Research – Strategy – Design – Development", body: "We simplified their multi-step quote flow into something a first-time visitor could finish without help, which was the actual goal behind the redesign." }
-    ];
+  { name: "Vess & Rowe", tags: "Research – Strategy", body: "A round of interviews and usability tests gave us a clear direction." },
+  { name: "Marlowe Labs", tags: "Design", body: "Built an online store that matched the product's packaging and feel." },
+  { name: "Coastline Freight", tags: "Research – Strategy – Design – Development", body: "Maintained and grew their logistics platform over several years." },
+  { name: "Iron Gate Studio", tags: "Strategy – Design – Development", body: "Restructured messaging hierarchy and improved findability." },
+  { name: "Fernhollow", tags: "Research – Strategy – Design – Development", body: "A wellness app with a calm, unhurried interface." },
+  { name: "Quill Insurance", tags: "Research – Strategy – Design – Development", body: "Simplified their multi-step quote flow for first-time visitors." }
+];
     list.innerHTML = worked.map((w, i) => `
       <details class="worked-item">
         <summary>
