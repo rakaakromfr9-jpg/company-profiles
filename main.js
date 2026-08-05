@@ -11,7 +11,7 @@
 // 4. Paste that same URL below as DISCORD_REDIRECT_URI
 // ==========================================================================
 const DISCORD_CLIENT_ID = '1534210727001325618';
-const DISCORD_REDIRECT_URI = window.location.origin + window.location.pathname;
+const DISCORD_REDIRECT_URI = 'https://rakaakromfr9-jpg.github.io/company-profiles/';
 
 document.addEventListener('DOMContentLoaded', () => {
   // View Elements
