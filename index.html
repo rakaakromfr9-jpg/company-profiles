@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YVOLKA Company</title>
+  <title>YVOLKA Company </title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=Archivo+Expanded:wght@700;800;900&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
@@ -83,11 +83,6 @@
           </p>
         </div>
 
-        <div class="config-trigger-wrap">
-          <button id="configDiscordBtn" class="btn-config-link">
-            ⚙ Configure Custom Discord Client ID
-          </button>
-        </div>
       </section>
 
       <!-- Bottom Ticker -->
@@ -289,6 +284,7 @@
             <p>Monday – Friday</p>
             <p>08:00 – 18:00</p>
           </div>
+          
         </div>
       </div>
       <div class="footer-bottom">
@@ -297,29 +293,6 @@
       </div>
     </footer>
 
-  </div>
-
-  <!-- DISCORD CLIENT CONFIG MODAL -->
-  <div id="configModal" class="modal-overlay">
-    <div class="modal-card">
-      <h3>Discord Developer Settings</h3>
-      <p>Enter your Discord Application Client ID from the Discord Developer Portal to enable live OAuth2 logins.</p>
-      
-      <div class="input-group">
-        <label for="clientIdInput">Application Client ID</label>
-        <input type="text" id="clientIdInput" placeholder="e.g. 123456789012345678">
-      </div>
-      
-      <div class="input-group">
-        <label for="redirectUriInput">Redirect URI</label>
-        <input type="text" id="redirectUriInput" placeholder="http://localhost:8080/index.html">
-      </div>
-      
-      <div class="modal-buttons">
-        <button id="closeModalBtn" class="btn-secondary">Cancel</button>
-        <button id="saveConfigBtn" class="btn-primary">Save &amp; Connect</button>
-      </div>
-    </div>
   </div>
 
   <script src="main.js"></script>
