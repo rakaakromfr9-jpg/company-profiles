@@ -10,7 +10,7 @@
 //    (e.g. https://yourdomain.com/ or https://yourdomain.com/index.html)
 // 4. Paste that same URL below as DISCORD_REDIRECT_URI
 // ==========================================================================
-const DISCORD_CLIENT_ID = 'file:///D:/Web%20Company/Company%20Profile/backup/index.html';
+const DISCORD_CLIENT_ID = 'https://rakaakromfr9-jpg.github.io/company-profiles/';
 const DISCORD_REDIRECT_URI = window.location.origin + window.location.pathname;
 
 document.addEventListener('DOMContentLoaded', () => {
