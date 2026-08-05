@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Option 1: Direct Discord OAuth Login (public — no per-user config needed)
   if (discordLoginBtn) {
     discordLoginBtn.addEventListener('click', () => {
-      if (!DISCORD_CLIENT_ID || DISCORD_CLIENT_ID === '1534210727001325618') {
+      if (!DISCORD_CLIENT_ID || DISCORD_CLIENT_ID === '') {
         alert('Discord login is not configured yet. The site owner needs to set DISCORD_CLIENT_ID in main.js.');
         return;
       }
