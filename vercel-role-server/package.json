@@ -1,0 +1,6 @@
+{
+  "name": "yvolka-role-server-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Serverless function Vercel yang membaca role Discord user di server YVOLKA."
+}
