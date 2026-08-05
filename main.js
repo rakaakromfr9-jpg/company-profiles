@@ -13,8 +13,45 @@
 const DISCORD_CLIENT_ID = '1534210727001325618';
 const DISCORD_REDIRECT_URI = 'https://rakaakromfr9-jpg.github.io/company-profiles/';
 
+// ==========================================================================
+// ROLE SERVER CONFIG — set this to your deployed backend URL.
+// See /server/README.md for how to set up and deploy that backend.
+// Categories (Developer / Artist / Creator) are NOT picked by the user —
+// they're read from the user's Discord server role via this backend.
+// ==========================================================================
+const ROLE_SERVER_URL = ''; // e.g. 'https://yvolka-role-server.onrender.com'
+
 // Labels for the "Let's Join With Us" categories
 const ROLE_LABELS = { developer: 'Developer', artist: 'Artist', creator: 'Creator' };
+
+// Ask the backend what category this Discord user belongs to.
+// Returns 'developer' | 'artist' | 'creator' | null.
+async function fetchServerRole(discordId) {
+  if (!ROLE_SERVER_URL) {
+    console.warn('ROLE_SERVER_URL is not set in main.js — categories will show as "No category yet".');
+    return null;
+  }
+  try {
+    const res = await fetch(`${ROLE_SERVER_URL}/api/role/${discordId}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.role || null;
+  } catch (err) {
+    console.error('Could not reach role server:', err);
+    return null;
+  }
+}
+
+// Human-readable category chip text + whether it should look "muted"
+function roleDisplay(user) {
+  if (user.role && ROLE_LABELS[user.role]) {
+    return { label: ROLE_LABELS[user.role], muted: false };
+  }
+  if (user.auth_type === 'nickname') {
+    return { label: 'Sign in with Discord for a category', muted: true };
+  }
+  return { label: 'No category yet', muted: true };
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   // View Elements
@@ -35,46 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const authBadge = document.querySelector('.auth-badge');
   const userRoleBadge = document.getElementById('userRoleBadge');
 
-  // Role selection (before login)
-  const roleCards = document.querySelectorAll('.role-card');
-  const selectedRolePill = document.getElementById('selectedRolePill');
-  const selectedRoleLabel = document.getElementById('selectedRoleLabel');
-  let selectedRole = localStorage.getItem('yvolka_role') || null;
-
   // Dashboard tabs
   const dashNavLinks = document.querySelectorAll('.dash-nav-link');
   const dashViews = document.querySelectorAll('.dash-view');
-
-  // ---------------------------------------------------------------------
-  // ROLE SELECTION ("Let's Join With Us")
-  // ---------------------------------------------------------------------
-  function updateRolePill() {
-    if (!selectedRoleLabel) return;
-    if (selectedRole) {
-      selectedRoleLabel.textContent = `Joining as ${ROLE_LABELS[selectedRole]}`;
-      selectedRolePill.classList.add('has-role');
-      selectedRolePill.style.setProperty('--role-color', `var(--role-${selectedRole})`);
-    } else {
-      selectedRoleLabel.textContent = 'Select a category above';
-      selectedRolePill.classList.remove('has-role');
-    }
-  }
-
-  roleCards.forEach(card => {
-    card.addEventListener('click', () => {
-      selectedRole = card.dataset.role;
-      localStorage.setItem('yvolka_role', selectedRole);
-      roleCards.forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      updateRolePill();
-    });
-  });
-
-  if (selectedRole) {
-    const savedCard = document.querySelector(`.role-card[data-role="${selectedRole}"]`);
-    if (savedCard) savedCard.classList.add('selected');
-  }
-  updateRolePill();
 
   // ---------------------------------------------------------------------
   // DASHBOARD TABS (Home / Account / Campaign)
@@ -121,14 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
       authBadge.textContent = user.auth_type === 'nickname' ? 'Signed in via Nickname' : 'Verified via Discord OAuth2';
     }
 
-    const roleLabel = ROLE_LABELS[user.role] || 'Creator';
-    if (userRoleBadge) userRoleBadge.textContent = roleLabel;
+    const { label: roleLabel, muted: roleMuted } = roleDisplay(user);
+    if (userRoleBadge) {
+      userRoleBadge.textContent = roleLabel;
+      userRoleBadge.classList.toggle('muted', roleMuted);
+    }
 
-    renderAccountView(user, avatarUrl, roleLabel);
+    renderAccountView(user, avatarUrl, roleLabel, roleMuted);
   }
 
   // Render the dedicated Account tab
-  function renderAccountView(user, avatarUrl, roleLabel) {
+  function renderAccountView(user, avatarUrl, roleLabel, roleMuted) {
     const accAvatar = document.getElementById('accountAvatarImg');
     const accName = document.getElementById('accountName');
     const accUsername = document.getElementById('accountUsername');
@@ -136,16 +139,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const accRoleChip = document.getElementById('accountRoleChip');
     const accRoleText = document.getElementById('accountRoleText');
     const accJoined = document.getElementById('accountJoined');
+    const accRoleNote = document.getElementById('accountRoleNote');
 
     if (accAvatar) accAvatar.src = avatarUrl;
     if (accName) accName.textContent = user.global_name || user.username;
     if (accUsername) accUsername.textContent = user.username.startsWith('@') ? user.username : `@${user.username}`;
     if (accAuthBadge) accAuthBadge.textContent = user.auth_type === 'nickname' ? 'Signed in via Nickname' : 'Verified via Discord OAuth2';
-    if (accRoleChip) accRoleChip.textContent = roleLabel;
+    if (accRoleChip) {
+      accRoleChip.textContent = roleLabel;
+      accRoleChip.classList.toggle('muted', roleMuted);
+    }
     if (accRoleText) accRoleText.textContent = roleLabel;
     if (accJoined) {
       if (!user.joined_label) user.joined_label = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
       accJoined.textContent = user.joined_label;
+    }
+    if (accRoleNote) {
+      if (user.role) {
+        accRoleNote.textContent = 'Category is synced from your role in the YVOLKA Discord server.';
+      } else if (user.auth_type === 'nickname') {
+        accRoleNote.textContent = 'Nickname sign-in can\'t be matched to a Discord role. Sign in with Discord to get a category.';
+      } else {
+        accRoleNote.textContent = 'No category role found yet. Ask an admin to assign your Developer / Artist / Creator role in Discord.';
+      }
     }
   }
 
@@ -165,10 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { Authorization: `${tokenType || 'Bearer'} ${accessToken}` }
       })
         .then(res => res.json())
-        .then(userData => {
+        .then(async userData => {
           if (userData && userData.id) {
             userData.auth_type = 'oauth2';
-            userData.role = selectedRole || 'creator';
+            userData.role = await fetchServerRole(userData.id); // read from Discord server role
             localStorage.setItem('discord_user', JSON.stringify(userData));
             renderUserHeader(userData);
             setView('dashboard');
@@ -194,6 +210,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const userObj = JSON.parse(savedUser);
         renderUserHeader(userObj);
         setView('dashboard');
+
+        // Re-check the Discord role in the background — if an admin changed
+        // it since last visit, the dashboard updates without a fresh login.
+        if (userObj.auth_type === 'oauth2') {
+          fetchServerRole(userObj.id).then(role => {
+            userObj.role = role;
+            localStorage.setItem('discord_user', JSON.stringify(userObj));
+            renderUserHeader(userObj);
+          });
+        }
       } catch (e) {
         localStorage.removeItem('discord_user');
         setView('welcome');
@@ -204,6 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- NICKNAME LOGIN HANDLER ---
+  // Note: nickname sign-in isn't a verified Discord account, so it can't be
+  // matched against a Discord server role — these users get no category.
   function handleNicknameSubmit() {
     const rawName = nicknameInputInline ? nicknameInputInline.value.trim() : '';
     if (!rawName) {
@@ -219,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
       global_name: rawName,
       avatar: `https://cdn.discordapp.com/embed/avatars/${randomAvatarIndex}.png`,
       auth_type: 'nickname',
-      role: selectedRole || 'creator'
+      role: null
     };
 
     localStorage.setItem('discord_user', JSON.stringify(userObj));

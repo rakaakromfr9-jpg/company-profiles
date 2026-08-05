@@ -53,30 +53,30 @@
         </a>
       </section>
 
-      <!-- SECTION 1.5: LET'S JOIN WITH US — ROLE SELECTION (BEFORE LOGIN) -->
+      <!-- SECTION 1.5: LET'S JOIN WITH US — CATEGORIES (INFO ONLY, NO PICKING) -->
       <section id="rolesSection" class="roles-section">
         <div class="welcome-grid-bg"></div>
         <div class="roles-inner">
-          <span class="eyebrow-alt">Pick your category</span>
+          <span class="eyebrow-alt">How categories work</span>
           <h2 class="roles-title">Let's Join <span class="accent">With Us.</span></h2>
-          <p class="roles-sub">Choose the category that fits you best before you sign in — it shapes what your dashboard shows you.</p>
+          <p class="roles-sub">There are three categories at YVOLKA. You don't pick one — it's read automatically from your role in our Discord server once you sign in below.</p>
 
-          <div class="role-cards" id="roleCards">
-            <button type="button" class="role-card" data-role="developer">
+          <div class="role-info-grid">
+            <div class="role-info-card">
               <span class="role-num">01</span>
               <h3>Developer</h3>
-              <p>Build the systems, tools and platforms that power YVOLKA's work.</p>
-            </button>
-            <button type="button" class="role-card" data-role="artist">
+              <p>Builds the systems, tools and platforms that power YVOLKA's work.</p>
+            </div>
+            <div class="role-info-card">
               <span class="role-num">02</span>
               <h3>Artist</h3>
-              <p>Shape the visual identity, illustration and craft behind every project.</p>
-            </button>
-            <button type="button" class="role-card" data-role="creator">
+              <p>Shapes the visual identity, illustration and craft behind every project.</p>
+            </div>
+            <div class="role-info-card">
               <span class="role-num">03</span>
               <h3>Creator</h3>
-              <p>Produce content, campaigns and stories that carry YVOLKA's voice.</p>
-            </button>
+              <p>Produces content, campaigns and stories that carry YVOLKA's voice.</p>
+            </div>
           </div>
 
           <a href="#authSection" class="scroll-prompt roles-continue">
@@ -88,10 +88,6 @@
 
       <!-- SECTION 2: SIGN IN CARD SECTION (SCROLL DOWN REVEAL) -->
       <section id="authSection" class="auth-section">
-        <div class="selected-role-pill" id="selectedRolePill">
-          <span class="dot"></span><span id="selectedRoleLabel">Select a category above</span>
-        </div>
-
         <h2 class="auth-page-title">Sign In</h2>
 
         <div class="auth-card">
@@ -149,7 +145,7 @@
           <div class="user-name">
             <span id="userGlobalName">Alex Rivera</span>
             <span class="auth-badge">Verified via Discord</span>
-            <span class="role-chip" id="userRoleBadge">Creator</span>
+            <span class="role-chip" id="userRoleBadge">—</span>
           </div>
           <div id="userUsername" class="user-tag">@alex_yvolka</div>
         </div>
@@ -277,6 +273,7 @@
               <div class="account-row"><span>Member since</span><span id="accountJoined">—</span></div>
               <div class="account-row"><span>Status</span><span>Active member</span></div>
             </div>
+            <p class="role-status-note" id="accountRoleNote"></p>
             <button id="accountLogoutBtn" class="btn-logout" style="margin-top:24px;">Sign Out</button>
           </div>
         </section>
