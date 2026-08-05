@@ -1,35 +1,34 @@
+// ==========================================================================
+// DISCORD OAUTH2 CONFIG — set this ONCE, here, as the site owner.
+// This is public and safe to hardcode (Client ID is not a secret — only
+// Client Secret is, and this app never uses Client Secret since it relies
+// on the OAuth2 implicit flow, response_type=token).
+//
+// 1. Go to https://discord.com/developers/applications
+// 2. Create/select your application, copy its "Application ID" (Client ID)
+// 3. Under OAuth2 > Redirects, add EXACTLY the URL this site is hosted at
+//    (e.g. https://yourdomain.com/ or https://yourdomain.com/index.html)
+// 4. Paste that same URL below as DISCORD_REDIRECT_URI
+// ==========================================================================
+const DISCORD_CLIENT_ID = 'file:///D:/Web%20Company/Company%20Profile/backup/index.html';
+const DISCORD_REDIRECT_URI = window.location.origin + window.location.pathname;
+
 document.addEventListener('DOMContentLoaded', () => {
   // View Elements
   const welcomeView = document.getElementById('welcomeView');
   const dashboardView = document.getElementById('dashboardView');
 
-  // Auth Buttons & Modals
+  // Auth Buttons
   const discordLoginBtn = document.getElementById('discordLoginBtn');
   const nicknameInputInline = document.getElementById('nicknameInputInline');
   const nicknameSubmitBtn = document.getElementById('nicknameSubmitBtn');
   const logoutBtn = document.getElementById('logoutBtn');
-  const configDiscordBtn = document.getElementById('configDiscordBtn');
-  
-  // Modals
-  const configModal = document.getElementById('configModal');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-  const saveConfigBtn = document.getElementById('saveConfigBtn');
-  const clientIdInput = document.getElementById('clientIdInput');
-  const redirectUriInput = document.getElementById('redirectUriInput');
 
   // Dashboard Profile Elements
   const userAvatarImg = document.getElementById('userAvatarImg');
   const userGlobalName = document.getElementById('userGlobalName');
   const userUsername = document.getElementById('userUsername');
   const authBadge = document.querySelector('.auth-badge');
-
-  // Config State
-  const defaultRedirectUri = window.location.origin + window.location.pathname;
-  let discordClientId = localStorage.getItem('discord_client_id') || '';
-  let discordRedirectUri = localStorage.getItem('discord_redirect_uri') || defaultRedirectUri;
-
-  if (clientIdInput) clientIdInput.value = discordClientId;
-  if (redirectUriInput) redirectUriInput.value = discordRedirectUri;
 
   // View Router Function
   function setView(viewName) {
@@ -146,18 +145,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- EVENT LISTENERS ---
 
-  // Option 1: Direct Discord OAuth Login
+  // Option 1: Direct Discord OAuth Login (public — no per-user config needed)
   if (discordLoginBtn) {
     discordLoginBtn.addEventListener('click', () => {
-      const clientId = localStorage.getItem('discord_client_id') || discordClientId;
-      const redirectUri = localStorage.getItem('discord_redirect_uri') || defaultRedirectUri;
-
-      if (!clientId) {
-        if (configModal) configModal.classList.add('modal-open');
+      if (!DISCORD_CLIENT_ID || DISCORD_CLIENT_ID === '1534210727001325618') {
+        alert('Discord login is not configured yet. The site owner needs to set DISCORD_CLIENT_ID in main.js.');
         return;
       }
 
-      const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20email`;
+      const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=token&scope=identify%20email`;
       window.location.href = authUrl;
     });
   }
@@ -180,38 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('discord_user');
       setView('welcome');
-    });
-  }
-
-  // Config Modal Handlers
-  if (configDiscordBtn) {
-    configDiscordBtn.addEventListener('click', () => {
-      if (configModal) configModal.classList.add('modal-open');
-    });
-  }
-
-  if (closeModalBtn) {
-    closeModalBtn.addEventListener('click', () => {
-      if (configModal) configModal.classList.remove('modal-open');
-    });
-  }
-
-  if (saveConfigBtn) {
-    saveConfigBtn.addEventListener('click', () => {
-      const newClientId = clientIdInput.value.trim();
-      const newRedirectUri = redirectUriInput.value.trim() || defaultRedirectUri;
-
-      localStorage.setItem('discord_client_id', newClientId);
-      localStorage.setItem('discord_redirect_uri', newRedirectUri);
-      discordClientId = newClientId;
-      discordRedirectUri = newRedirectUri;
-
-      if (configModal) configModal.classList.remove('modal-open');
-
-      if (newClientId) {
-        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${newClientId}&redirect_uri=${encodeURIComponent(newRedirectUri)}&response_type=token&scope=identify%20email`;
-        window.location.href = authUrl;
-      }
     });
   }
 
